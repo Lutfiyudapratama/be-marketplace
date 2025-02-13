@@ -12,7 +12,7 @@ class Authcontroller extends Controller
     function auth(Request $request)
     {
       $request->validate([
-         'email' => 'required|email|unique,users:email',
+         'email' => 'required|email|exists:users,email',
             'password' => 'required'
       ]);  
       $user = User::where('email', $request->email)->first();
@@ -22,9 +22,10 @@ class Authcontroller extends Controller
               'message' => 'Wrong password'
           ],);
       }
-      $token = $user->createToken($user->name . '-AuthToken')
-      ->plaintexttoken;
+      $token = $user->createToken($user->name . 'AuthToken')
+      ->plainTextToken;
       return response()->json([
+        'message' => 'login success!',
         'access_token' => $token,
       ]);
     }
